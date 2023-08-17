@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option csharp_namespace = "OrderStore";
+
+package order;
+
+// The greeting service definition.
+service OrderProvider {
+   rpc GetOrder (OrderRequest) returns (OrderReply);
+}
+
+
+message OrderRequest {
+  string orderid = 1;
+}
+
+
+message OrderReply {
+  string orderid = 1;
+  string product = 2;
+  double size = 3;
+  double qdone = 4;
+  string price = 5;
+  string acronym = 6;
+  string account = 7;
+  string txfaccount = 8;
+}
