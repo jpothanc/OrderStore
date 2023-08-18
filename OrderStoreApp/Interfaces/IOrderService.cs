@@ -1,4 +1,7 @@
-﻿using OrderStore;
+﻿
+using OrderStore;
+using OrderStoreApp.Interfaces;
+using OrderStoreCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +10,14 @@ using System.Threading.Tasks;
 
 namespace OrderStoreApp.Services
 {
-    internal interface IOrderService
+    public interface IOrderService
     {
         void Start();
         void Stop();
-        void Subscribe(Action<OrderReply> handler);
+        IDisposable SubscribeOrder(Action<OrderEvent> action);
+        IDisposable SubscribeFill(Action<FillEvent> action);
+        IOrderTransaction Transaction();
+
+        OrderResponse GetOrder(string orderId);
     }
 }

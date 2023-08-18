@@ -1,26 +1,48 @@
 ﻿using Grpc.Core;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+using OrderStoreApp.Services;
 
 namespace OrderStore.Grpc
 {
     public class OrderProviderService : OrderProvider.OrderProviderBase
     {
         private readonly ILogger<OrderProviderService> _logger;
+        private readonly IOrderService _orderService;
 
-        public OrderProviderService(ILogger<OrderProviderService> logger)
+        public OrderProviderService(ILogger<OrderProviderService> logger, IServiceProvider provider)
         {
             _logger = logger;
+            _orderService = provider.GetService<IOrderService>();
+        }
+        
+        public override Task<OrderResponse> GetOrder(OrderRequest request, ServerCallContext context)
+        {
+            var response = _orderService?.GetOrder(request.Orderid);
+            return Task.FromResult(response);
+        }
+        public override async Task SubscribeOrder(OrderCriteria request, 
+            IServerStreamWriter<Order> responseStream, 
+            ServerCallContext context)
+        {
+            _orderService.SubscribeOrder(x =>
+            {
+                if(x != null)
+                    responseStream.WriteAsync(x.Order);
+            });
+            while (!context.CancellationToken.IsCancellationRequested) ;
         }
 
-        
-        public override Task<OrderReply> GetOrder(OrderRequest request, ServerCallContext context)
+        public override async Task SubscribeFill(FillCriteria request,
+            IServerStreamWriter<Fill> responseStream,
+            ServerCallContext context)
         {
-            return Task.FromResult( new  OrderReply
+            _orderService.SubscribeFill(x =>
             {
-                Orderid = "test",
-                Acronym = "F10"
+                if (x != null)
+                    responseStream.WriteAsync(x.Fill);
             });
+            while (!context.CancellationToken.IsCancellationRequested) ;
         }
+
+
     }
 }

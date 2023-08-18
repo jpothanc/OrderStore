@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OrderStoreApp.Services;
 
 namespace OrderStore.Controllers
 {
@@ -6,13 +7,18 @@ namespace OrderStore.Controllers
     [Route("api/[controller]")]
     public class OrderController : Controller
     {
-        public async Task<IActionResult> Get()
+        private readonly IOrderService _orderService;
+
+        public OrderController(IServiceProvider provider)
         {
-            return Ok(new OrderReply
-            {
-                Orderid = "test",
-                Acronym = "F10"
-            });
+            _orderService = provider.GetService<IOrderService>();
+        }
+        
+        [HttpGet("order")] 
+        public async Task<IActionResult> GetOrder(string orderId)
+        {
+            var order = _orderService?.GetOrder(orderId);
+            return Ok(order);
         }
     }
 }

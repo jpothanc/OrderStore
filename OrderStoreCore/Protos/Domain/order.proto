@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto"; 
+
+option csharp_namespace = "OrderStore";
+
+package order;
+
+
+enum State {
+  LIVE = 0;
+  FILLED = 1;
+  BOOKED = 2;
+  CXL = 3;
+  CLOSED = 4;
+}
+
+enum TransType {
+  NO = 0;
+  UP = 1;
+  NF = 2;
+  ND = 3;
+}
+
+service OrderProvider {
+   rpc GetOrder (OrderRequest) returns (OrderResponse);
+   rpc SubscribeOrder (OrderCriteria) returns (stream Order);
+   rpc SubscribeFill (FillCriteria) returns (stream Fill);
+}
+
+service OrderTransactionProvider {
+   rpc NewOrderTrans (Order) returns (OrderId);
+   rpc CancelOrderTrans (OrderId) returns (OrderId);
+   rpc NewFillTrans (Fill) returns (FillId);
+}
+
+
+message OrderId {
+  string orderid = 1;
+}
+
+message FillId {
+  string fillid = 1;
+}
+
+message OrderRequest {
+  string orderid = 1;
+}
+
+message OrderResponse {
+  Order order = 1;
+  bool hasvalue = 2;
+}
+
+
+message Order {
+  string orderid = 1;
+  string parentorderid = 2;
+  State state = 3;
+  string product = 4;
+  double size = 5;
+  double qdone = 6;
+  string price = 7;
+  string acronym = 8;
+  string account = 9;
+  string txfaccount = 10;
+  string entity = 11;
+  google.protobuf.Timestamp ostamp = 12;
+  google.protobuf.Timestamp cstamp = 13;
+  
+}
+
+message Fill {
+  string orderid = 1;
+  string fillid = 2;
+  string parentfillid = 3;
+  State state = 4;
+  string product = 5;
+  double size = 6;
+  string price = 7;
+  string cbrk = 8;
+  string cpty = 9;
+  google.protobuf.Timestamp fstamp = 10;
+  
+}
+
+message OrderCriteria {
+  string criteria = 1;
+}
+message FillCriteria {
+  string criteria = 1;
+}

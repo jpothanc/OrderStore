@@ -11,16 +11,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\OrderStoreAdaptors\OrderStoreAdaptors.csproj" />
     <ProjectReference Include="..\OrderStoreApp\OrderStoreApp.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
+    <Folder Include="Configurations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
 </Project>

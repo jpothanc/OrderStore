@@ -2,13 +2,13 @@
 using OrderStoreAdaptors.Cache;
 using OrderStoreApp.Ports;
 
-namespace OrderStoreAdaptors.Configurations
+namespace OrderStoreAdaptors.Extensions
 {
     public static class AdaptorExtensions
     {
         public static IServiceCollection AddAdaptorExtensions(this IServiceCollection services)
         {
-            services.AddSingleton<IOrderCache, OrderCache>();
+            services.AddSingleton<ICache, MemoryCache>();
             return services;
         }
     }
