@@ -1,4 +1,4 @@
-name: Publish1
+name: order-store publish
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 permissions : read-all
 
 env:
-  AZURE_WEBAPP_NAME: product-store
+  AZURE_WEBAPP_NAME: order-store
   AZURE_WEBAPP_PACKAGE_PATH: "./publish"
 
 jobs:
@@ -28,13 +28,13 @@ jobs:
             dotnet-version: '6.0.x'
         
         - name: Restore
-          run: dotnet restore ./ProductStore.sln
+          run: dotnet restore ./OrderStore.sln
         
         - name: Build
-          run: dotnet build ./ProductStore.sln --configuration Release --no-restore
+          run: dotnet build ./OrderStore.sln --configuration Release --no-restore
           
         - name: Publish
-          run: dotnet publish ./ProductStore.sln --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          run: dotnet publish ./OrderStore.sln --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         
         - name: Deployment
           uses: azure/webapps-deploy@v2
