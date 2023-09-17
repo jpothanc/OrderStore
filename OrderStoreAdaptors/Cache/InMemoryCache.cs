@@ -1,5 +1,6 @@
 ﻿using OrderStore;
 using OrderStoreApp.Ports;
+using OrderStoreApp.Services;
 using OrderStoreCore.Models;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
@@ -7,24 +8,18 @@ using System.Reactive.Subjects;
 
 namespace OrderStoreAdaptors.Cache
 {
-    internal class MemoryCache : ICache
+    public class InMemoryCache : ICache
     {
-        
-        private readonly Subject<OrderEvent> _orderSubject;
-        private IObservable<OrderEvent> _orderObservable;
-        private readonly Subject<FillEvent> _fillSubject;
-        private IObservable<FillEvent> _fillObservable;
+
+        private IItemObserver<OrderEvent> _orderObserver;
+        private IItemObserver<FillEvent> _fillObserver;
         private ConcurrentDictionary<string, Order> _orderCache;
         private ConcurrentDictionary<string, Fill> _fillCache;
 
-        public MemoryCache()
+        public InMemoryCache()
         {
-            _orderSubject = new();
-            _orderObservable = _orderSubject.AsObservable();
-
-            _fillSubject = new();
-            _fillObservable = _fillSubject.AsObservable();
-
+            _orderObserver = new ItemObserver<OrderEvent>();
+            _fillObserver = new ItemObserver<FillEvent>();
             _orderCache = new();
             _fillCache = new();
         }
@@ -43,14 +38,14 @@ namespace OrderStoreAdaptors.Cache
         {
             order.Orderid = Guid.NewGuid().ToString();
             _orderCache.TryAdd(order.Orderid, order);
-            _orderSubject.OnNext(new OrderEvent(order));
+            _orderObserver.Notify(new OrderEvent(order));
             return order.Orderid;
         }
         private string AddFill(Fill fill)
         {
             fill.Fillid = Guid.NewGuid().ToString();
             _fillCache.TryAdd(fill.Fillid, fill);
-            _fillSubject.OnNext(new FillEvent(fill));
+            _fillObserver.Notify(new FillEvent(fill));
             return fill.Fillid;
         }
 
@@ -64,38 +59,21 @@ namespace OrderStoreAdaptors.Cache
                 Hasvalue = order != null
             };
         }
-        public IDisposable SubscribeOrder(Action<OrderEvent> action)
+        public void SubscribeOrder(Action<OrderEvent> action)
         {
-            return _orderObservable.Subscribe(action);
+            _orderObserver.Subscribe(action);
         }
-        public IDisposable SubscribeFill(Action<FillEvent> action)
+        public void SubscribeFill(Action<FillEvent> action)
         {
-            return _fillObservable.Subscribe(action);
+            _fillObserver.Subscribe(action);
         }
 
         public string Update(Order order)
         {
             _orderCache.TryAdd(order.Orderid, order);
-            _orderSubject.OnNext(new OrderEvent(order, OrderEventType.Update));
+            _orderObserver.Notify(new OrderEvent(order, OrderEventType.Update));
             return order.Orderid;
         }
-
-        private async Task OrderGenerator()
-        {
-            
-            while (true)
-            {
-                var o = new Order
-                {
-                    Orderid = Guid.NewGuid().ToString(),
-                    Acronym = "F10"
-                };
-
-                _orderSubject.OnNext(new OrderEvent(o));
-                await Task.Delay(100);
-            }
-        }
-
-       
     }
 }
+

@@ -25,7 +25,7 @@ namespace OrderStoreApp.Services
             if (!response.Hasvalue)
                 return string.Empty;
 
-            response.Order.State = State.Cxl;
+            response.Order.State = State.Cxl.ToString();
             _cache.Update(response.Order);
             return orderId;
         }

@@ -56,7 +56,7 @@ message OrderResponse {
 message Order {
   string orderid = 1;
   string parentorderid = 2;
-  State state = 3;
+  string state = 3;
   string product = 4;
   double size = 5;
   double qdone = 6;

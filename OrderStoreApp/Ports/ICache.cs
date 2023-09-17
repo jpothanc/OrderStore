@@ -9,8 +9,8 @@ namespace OrderStoreApp.Ports
         string Update(Order order);
         OrderResponse GetOrder(string id);
 
-        IDisposable SubscribeOrder(Action<OrderEvent> action);
-        IDisposable SubscribeFill(Action<FillEvent> action);
+        void SubscribeOrder(Action<OrderEvent> action);
+        void SubscribeFill(Action<FillEvent> action);
 
     }
 }

@@ -16,7 +16,6 @@ namespace OrderStoreApp.Validators
             _validators = validators;
         }
 
-
         public IValidator GetValidator(Type type)
         {
            return _validators.Where(x => x.Type == type).ToList().FirstOrDefault();   

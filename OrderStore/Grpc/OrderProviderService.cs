@@ -25,8 +25,11 @@ namespace OrderStore.Grpc
         {
             _orderService.SubscribeOrder(x =>
             {
-                if(x != null)
+                if (x != null)
+                {
                     responseStream.WriteAsync(x.Order);
+                    Console.WriteLine($"Order Received {x.Order.Orderid}");
+                }
             });
             while (!context.CancellationToken.IsCancellationRequested) ;
         }
@@ -38,7 +41,10 @@ namespace OrderStore.Grpc
             _orderService.SubscribeFill(x =>
             {
                 if (x != null)
+                {
                     responseStream.WriteAsync(x.Fill);
+                    Console.WriteLine($"Fill Received {x.Fill}");
+                }
             });
             while (!context.CancellationToken.IsCancellationRequested) ;
         }

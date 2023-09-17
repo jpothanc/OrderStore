@@ -11,7 +11,7 @@ namespace OrderStoreApp.Internal
     {
         public static void SetDefaults(this Order order)
         {
-            order.State = State.Live;
+            order.State = State.Live.ToString();
         }
     }
 }

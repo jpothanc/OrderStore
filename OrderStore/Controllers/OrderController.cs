@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OrderStoreApp.Services;
+using OrderStoreCore.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace OrderStore.Controllers
 {
@@ -13,12 +15,36 @@ namespace OrderStore.Controllers
         {
             _orderService = provider.GetService<IOrderService>();
         }
-        
+        [HttpGet("wel")]
+        public async Task<IActionResult> GetOrder()
+        {
+            return Ok("Welcome");
+        }
+
         [HttpGet("order")] 
         public async Task<IActionResult> GetOrder(string orderId)
         {
             var order = _orderService?.GetOrder(orderId);
             return Ok(order);
+        }
+       
+        [HttpPost("create")]
+        public async Task<IActionResult> NewOrderTrans([FromBody][Required] OrderCreateRequest request)
+        {
+            Order order = new Order()
+            {
+                Product = request.Product,
+                Size = request.Size,
+                Price = request.Price,
+                Account = request.Account,
+                Entity = request.Entity,
+                Acronym = request.Acronym
+
+            };
+            
+
+            var id = _orderService.Transaction().NewOrderTrans(order);
+            return Ok(id);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace OrderStoreAdaptors.Extensions
     {
         public static IServiceCollection AddAdaptorExtensions(this IServiceCollection services)
         {
-            services.AddSingleton<ICache, MemoryCache>();
+            services.AddSingleton<ICache, InMemoryCache>();
             return services;
         }
     }

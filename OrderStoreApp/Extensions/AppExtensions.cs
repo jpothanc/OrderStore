@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OrderStoreApp.Interfaces;
 using OrderStoreApp.Services;
+using OrderStoreApp.SignalR;
 using OrderStoreApp.Validators;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace OrderStoreApp.Extensions
             services.AddSingleton<IValidatorFactory, ValidatorFactory>();
             services.AddSingleton<IValidator,FillValidator >();
             services.AddSingleton<IValidator,OrderValidator>();
+            services.AddSingleton<IPublishingService, PublishingService>();
             return services;
         }
     }

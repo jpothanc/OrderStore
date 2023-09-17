@@ -14,8 +14,8 @@ namespace OrderStoreApp.Services
     {
         void Start();
         void Stop();
-        IDisposable SubscribeOrder(Action<OrderEvent> action);
-        IDisposable SubscribeFill(Action<FillEvent> action);
+        void SubscribeOrder(Action<OrderEvent> action);
+        void SubscribeFill(Action<FillEvent> action);
         IOrderTransaction Transaction();
 
         OrderResponse GetOrder(string orderId);
