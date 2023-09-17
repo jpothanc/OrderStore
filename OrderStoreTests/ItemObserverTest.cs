@@ -8,12 +8,12 @@ namespace OrderStoreTests.Internal
     public class ItemObserverTest : TestBase
     {
 
-        private ItemObserver<OrderEvent> TestObserver(Action<OrderEvent> action)
-        {
-            ItemObserver<OrderEvent> observer = new();
-            observer.Subscribe(action);
-            return observer;
-        }
+        //private ItemObserver<OrderEvent> TestObserver(Action<OrderEvent> action)
+        //{
+        //    ItemObserver<OrderEvent> observer = new();
+        //    observer.Subscribe(action);
+        //    return observer;
+        //}
 
         //[Fact]
         //public void ObserveOnItemShouldBeSuccessful()
