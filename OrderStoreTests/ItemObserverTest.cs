@@ -64,11 +64,11 @@ namespace OrderStoreTests.Internal
         {
             ItemObserver<OrderEvent> observer = new();
             OrderEvent? response = null;
-            observer.Subscribe(x =>
+            var disposable = observer.Subscribe(x =>
             {
                 response = x;
             });
-            observer.UnSubscribe();
+            observer.UnSubscribe(disposable);
 
             observer.Notify(TestHelper.GetNewOrderEvent());
             Delay();
@@ -106,12 +106,12 @@ namespace OrderStoreTests.Internal
         {
             ItemObserver<OrderEvent> observer = new();
             OrderEvent? response = null;
-            observer.Subscribe(x =>
+            var disposable = observer.Subscribe(x =>
             {
                 response = x;
             });
-            observer.UnSubscribe();
-            observer.UnSubscribe();
+            observer.UnSubscribe(disposable);
+            observer.UnSubscribe(disposable);
 
             observer.Notify(TestHelper.GetNewOrderEvent());
             Delay();
