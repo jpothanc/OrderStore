@@ -1,2 +1,2 @@
 # OrderStore
- Equities Order Srore
+ Equities Order Store
