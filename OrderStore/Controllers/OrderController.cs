@@ -6,7 +6,8 @@ using System.ComponentModel.DataAnnotations;
 namespace OrderStore.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
+    [ApiVersion("1.0")]
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;
