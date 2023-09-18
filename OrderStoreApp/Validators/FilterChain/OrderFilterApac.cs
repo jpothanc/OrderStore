@@ -14,7 +14,7 @@ namespace OrderStoreApp.Validators.FilterChain
 
         public async Task<OrderEvent> Process(OrderEvent item)
         {
-            Console.WriteLine("Processing: " + this.GetType().Name);
+            Console.WriteLine("Processing: " + this.GetType().Name + $"{Thread.CurrentThread.Name}:{Thread.CurrentThread.ManagedThreadId}");
             item.Order.Entity = "CSFBJL";
 
             if (Next != null)

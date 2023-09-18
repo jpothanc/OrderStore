@@ -50,26 +50,18 @@ namespace OrderStoreApp.Services
         {
             _cache.SubscribeOrder()
                .SubscribeOn(NewThreadScheduler.Default)
-                .ObserveOn(Scheduler.Default)
+               .Select(async orderEvent => await _orderFilterChain.Process(orderEvent))
+                .ObserveOn(Scheduler.CurrentThread)
                 .Subscribe(async orderEvent =>
                 {
-                    orderEvent = await _orderFilterChain.Process(orderEvent);
-                    Console.WriteLine($"SubscribeOrder {orderEvent.Order.Orderid} : " +
+                    Console.WriteLine($"SubscribeOrder {orderEvent.Result.Order.Orderid} : " +
                         $"{Thread.CurrentThread.Name}:{Thread.CurrentThread.ManagedThreadId}");
-                    _orderObserver.Notify(orderEvent);
+                    _orderObserver.Notify(orderEvent.Result);
 
                 }, error => Console.WriteLine($"Error: {error.Message}"),
                 () => Console.WriteLine("Completed"));
         }
 
-        private async Task<OrderEvent> EnrichData(OrderEvent orderEvent)
-        {
-            Console.WriteLine($"EnrichData {orderEvent.Order.Orderid} : " +
-                    $"{Thread.CurrentThread.Name}:{Thread.CurrentThread.ManagedThreadId}");
-            orderEvent.Order.Account = "xxxx";
-            return orderEvent;
-        }
-       
         public OrderResponse GetOrder(string orderId)
         {
             return _cache.GetOrder(orderId);
