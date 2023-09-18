@@ -23,7 +23,7 @@ builder.Services.AddRouting();
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderStore", Version = "v1" });
 });
 
 var app = builder.Build();
@@ -43,13 +43,13 @@ app.UseEndpoints(endpoints =>
 app.MapGrpcService<OrderProviderService>();
 app.MapGrpcService<OrderTransactionProviderService>();
 app.MapControllers();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 app.UseSwagger();
 
 // Enable middleware to serve Swagger UI, specifying the Swagger JSON endpoint
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrderStore");
 });
 
 var startup = app.Services.GetService<Startup>();

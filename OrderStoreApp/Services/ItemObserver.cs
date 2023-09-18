@@ -11,6 +11,7 @@ namespace OrderStoreApp.Services
     public interface IItemObserver<T> 
     {
         IDisposable Subscribe(Action<T> action);
+        IObservable<T> Subscribe();
         void UnSubscribe(IDisposable disposable);
         void Notify(T item);
         
@@ -18,16 +19,18 @@ namespace OrderStoreApp.Services
     public class ItemObserver<T> : IItemObserver<T>
     {
         private Subject<T> _subject;
-        private IObservable<T> _observable;
         public ItemObserver()
         {
             _subject = new Subject<T>();
-            _observable = _subject.AsObservable();
+        }
+        public IObservable<T> Subscribe()
+        {
+            return _subject.AsObservable();
         }
 
-       public IDisposable Subscribe(Action<T> action)
+        public IDisposable Subscribe(Action<T> action)
         {
-            return _observable.Subscribe(action);
+            return _subject.AsObservable().Subscribe(action);
         }
 
         public void Notify(T item)

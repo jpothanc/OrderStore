@@ -3,6 +3,7 @@ using OrderStore;
 using OrderStoreApp.Interfaces;
 using OrderStoreApp.Internal;
 using OrderStoreApp.Ports;
+using OrderStoreApp.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,12 @@ namespace OrderStoreApp.Services
     internal class OrderTransaction : IOrderTransaction
     {
         private ICache _cache;
+        private IValidator _validator;
         public OrderTransaction(IServiceProvider provider)
         {
             _cache = provider.GetService<ICache>();
+            var validatorFactory = provider.GetService<IValidatorFactory>();
+            _validator = validatorFactory?.GetValidator(typeof(Order));
         }
 
         public string CancelOrderTrans(string orderId)
@@ -37,6 +41,7 @@ namespace OrderStoreApp.Services
 
         public string NewOrderTrans(Order order)
         {
+            _validator.Validate(order);
             order.SetDefaults();
             return _cache.Add(order);
         }

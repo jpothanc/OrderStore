@@ -8,9 +8,8 @@ namespace OrderStoreApp.Ports
         string Add<T>(T order);
         string Update(Order order);
         OrderResponse GetOrder(string id);
-
-        void SubscribeOrder(Action<OrderEvent> action);
-        void SubscribeFill(Action<FillEvent> action);
+        IObservable<OrderEvent> SubscribeOrder();
+        IObservable<FillEvent> SubscribeFill();
 
     }
 }

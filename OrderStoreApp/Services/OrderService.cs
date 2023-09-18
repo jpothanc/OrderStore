@@ -3,7 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using OrderStore;
 using OrderStoreCore.Models;
 using OrderStoreApp.Interfaces;
-using OrderStoreApp.Validators;
+using System.Reactive.Linq;
+using System.Reactive.Concurrency;
+using OrderStoreApp.Validators.FilterChain;
 
 namespace OrderStoreApp.Services
 {
@@ -13,6 +15,8 @@ namespace OrderStoreApp.Services
         private IItemObserver<FillEvent> _fillObserver;
         private readonly IOrderTransaction _orderTransaction;
         private ICache _cache;
+        private IFilterChain<OrderEvent> _orderFilterChain;
+
 
         public OrderService(IServiceProvider provider)
         {
@@ -21,24 +25,51 @@ namespace OrderStoreApp.Services
 
             _cache = provider.GetService<ICache>();
             _orderTransaction = provider.GetService<IOrderTransaction>();
+            _orderFilterChain = provider.GetService<IFilterChainFactory>()?.CreateOrderFilters("");
 
         }
         public void Start()
         {
-            _cache.SubscribeOrder(orderEvent =>
-            {
-                _orderObserver.Notify(orderEvent);
-            });
-            _fillObserver.Subscribe(fillEvent =>
-            {
-                _fillObserver.Notify(fillEvent);
-
-            });
+            SubscribeOrderEvents();
+            SubscribeFillEvents();
         }
 
-        public void Stop()
+        private void SubscribeFillEvents()
         {
+            _cache.SubscribeFill().
+                           ObserveOn(TaskPoolScheduler.Default).
+                           Subscribe(fillEvent =>
+                           {
+                               Console.WriteLine($"SubscribeFill {fillEvent.Fill.Fillid} : " +
+                                   $"{Thread.CurrentThread.Name}:{Thread.CurrentThread.ManagedThreadId}");
+                               _fillObserver.Notify(fillEvent);
+                           });
         }
+
+        private void SubscribeOrderEvents()
+        {
+            _cache.SubscribeOrder()
+               .SubscribeOn(NewThreadScheduler.Default)
+                .ObserveOn(Scheduler.Default)
+                .Subscribe(async orderEvent =>
+                {
+                    orderEvent = await _orderFilterChain.Process(orderEvent);
+                    Console.WriteLine($"SubscribeOrder {orderEvent.Order.Orderid} : " +
+                        $"{Thread.CurrentThread.Name}:{Thread.CurrentThread.ManagedThreadId}");
+                    _orderObserver.Notify(orderEvent);
+
+                }, error => Console.WriteLine($"Error: {error.Message}"),
+                () => Console.WriteLine("Completed"));
+        }
+
+        private async Task<OrderEvent> EnrichData(OrderEvent orderEvent)
+        {
+            Console.WriteLine($"EnrichData {orderEvent.Order.Orderid} : " +
+                    $"{Thread.CurrentThread.Name}:{Thread.CurrentThread.ManagedThreadId}");
+            orderEvent.Order.Account = "xxxx";
+            return orderEvent;
+        }
+       
         public OrderResponse GetOrder(string orderId)
         {
             return _cache.GetOrder(orderId);
@@ -57,6 +88,10 @@ namespace OrderStoreApp.Services
         public IOrderTransaction Transaction()
         {
             return _orderTransaction;
+        }
+        public void Stop()
+        {
+
         }
     }
 }

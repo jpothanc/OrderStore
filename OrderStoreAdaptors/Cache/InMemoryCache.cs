@@ -36,6 +36,7 @@ namespace OrderStoreAdaptors.Cache
 
         private string AddOrder(Order order)
         {
+            Console.WriteLine($"AddOrder {order.Orderid} : {Thread.CurrentThread.Name}:{Thread.CurrentThread.ManagedThreadId}");
             order.Orderid = Guid.NewGuid().ToString();
             _orderCache.TryAdd(order.Orderid, order);
             _orderObserver.Notify(new OrderEvent(order));
@@ -59,20 +60,21 @@ namespace OrderStoreAdaptors.Cache
                 Hasvalue = order != null
             };
         }
-        public void SubscribeOrder(Action<OrderEvent> action)
-        {
-            _orderObserver.Subscribe(action);
-        }
-        public void SubscribeFill(Action<FillEvent> action)
-        {
-            _fillObserver.Subscribe(action);
-        }
 
         public string Update(Order order)
         {
-            _orderCache.TryAdd(order.Orderid, order);
+            _orderCache.TryAdd(order.Orderid, order);   
             _orderObserver.Notify(new OrderEvent(order, OrderEventType.Update));
             return order.Orderid;
+        }
+
+        public IObservable<OrderEvent> SubscribeOrder()
+        {
+            return _orderObserver.Subscribe();
+        }
+        public IObservable<FillEvent> SubscribeFill()
+        {
+            return _fillObserver.Subscribe();
         }
     }
 }

@@ -3,6 +3,7 @@ using OrderStoreApp.Interfaces;
 using OrderStoreApp.Services;
 using OrderStoreApp.SignalR;
 using OrderStoreApp.Validators;
+using OrderStoreApp.Validators.FilterChain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace OrderStoreApp.Extensions
             services.AddSingleton<IValidator,FillValidator >();
             services.AddSingleton<IValidator,OrderValidator>();
             services.AddSingleton<IPublishingService, PublishingService>();
+            services.AddSingleton<IFilterChainFactory, FilterChainFactory>();
+
             return services;
         }
     }

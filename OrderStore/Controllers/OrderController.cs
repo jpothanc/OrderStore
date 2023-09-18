@@ -42,7 +42,6 @@ namespace OrderStore.Controllers
                 Acronym = request.Acronym
 
             };
-            
 
             var id = _orderService.Transaction().NewOrderTrans(order);
             return Ok(id);

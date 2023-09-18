@@ -28,6 +28,8 @@ namespace OrderStore.Grpc
                 if (x != null)
                 {
                     responseStream.WriteAsync(x.Order);
+                    Console.WriteLine($"grpc {x.Order.Orderid} : " +
+                    $"{Thread.CurrentThread.Name}:{Thread.CurrentThread.ManagedThreadId}");
                     Console.WriteLine($"Order Received {x.Order.Orderid}");
                 }
             });

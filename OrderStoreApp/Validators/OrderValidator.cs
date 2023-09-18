@@ -9,6 +9,10 @@ namespace OrderStoreApp.Validators
 {
     internal class OrderValidator : IValidator
     {
+        public OrderValidator()
+        {
+
+        }
         public Type Type => typeof(Order);
         public void Validate<T>(T item)
         {
