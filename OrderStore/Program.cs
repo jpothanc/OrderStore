@@ -20,11 +20,15 @@ builder.Services.AddAppExtensions();
 builder.Services.AddAdaptorExtensions();
 builder.Services.AddSignalR();
 builder.Services.AddRouting();
+// Configure Kestrel to listen on the desired URL
+var desiredUrl = GetDesiredApplicationUrl();
+
 
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderStore", Version = "v1" });
 });
+builder.WebHost.UseUrls(desiredUrl);
 
 var app = builder.Build();
 
@@ -52,7 +56,15 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrderStore");
 });
 
+
 var startup = app.Services.GetService<Startup>();
 startup?.Start();
 
 app.Run();
+
+// Implement a method to get the desired URL
+ static string GetDesiredApplicationUrl()
+{
+    // Replace this with your logic to determine the desired URL
+      return "http://localhost:5213;http://localhost:5214;https://localhost:7213";
+}
