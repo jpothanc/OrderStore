@@ -20,25 +20,18 @@ builder.Services.AddAppExtensions();
 builder.Services.AddAdaptorExtensions();
 builder.Services.AddSignalR();
 // Configure Kestrel to listen on the desired URL
-var desiredUrl = GetDesiredApplicationUrl();
+//var desiredUrl = GetDesiredApplicationUrl();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-
-builder.WebHost.UseUrls(desiredUrl);
+//builder.WebHost.UseUrls(desiredUrl);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 app.UseRouting();
-app.UseCors(x => x
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .SetIsOriginAllowed(origin => true) // allow any origin
-        .AllowCredentials()); // allow credentials
 
 app.UseEndpoints(endpoints =>
 {
@@ -57,9 +50,9 @@ startup?.Start();
 
 app.Run();
 
-// Implement a method to get the desired URL
- static string GetDesiredApplicationUrl()
-{
-    // Replace this with your logic to determine the desired URL
-      return "http://localhost:5213;http://localhost:5214;https://localhost:7213";
-}
+//// Implement a method to get the desired URL
+// static string GetDesiredApplicationUrl()
+//{
+//    // Replace this with your logic to determine the desired URL
+//      return "http://localhost:5213;http://localhost:5214;https://localhost:7213";
+//}
