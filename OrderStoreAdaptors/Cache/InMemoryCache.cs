@@ -60,6 +60,16 @@ namespace OrderStoreAdaptors.Cache
                 Hasvalue = order != null
             };
         }
+        public List<Order> GetOrders(SearchCriteria criteria)
+        {
+            var orders = new List<Order>(_orderCache.Count);
+            foreach (var kvp in _orderCache)
+            {
+                var order = kvp.Value;
+                orders.Add(order);
+            }
+            return orders;
+        }
 
         public string Update(Order order)
         {

@@ -19,15 +19,14 @@ builder.Services.AddControllers();
 builder.Services.AddAppExtensions();
 builder.Services.AddAdaptorExtensions();
 builder.Services.AddSignalR();
-builder.Services.AddRouting();
 // Configure Kestrel to listen on the desired URL
 var desiredUrl = GetDesiredApplicationUrl();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderStore", Version = "v1" });
-});
+
+
 builder.WebHost.UseUrls(desiredUrl);
 
 var app = builder.Build();
@@ -40,6 +39,7 @@ app.UseCors(x => x
         .AllowAnyHeader()
         .SetIsOriginAllowed(origin => true) // allow any origin
         .AllowCredentials()); // allow credentials
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<NotificationHub>("/hub");
@@ -48,14 +48,9 @@ app.MapGrpcService<OrderProviderService>();
 app.MapGrpcService<OrderTransactionProviderService>();
 app.MapControllers();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
+
 app.UseSwagger();
-
-// Enable middleware to serve Swagger UI, specifying the Swagger JSON endpoint
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrderStore");
-});
-
+app.UseSwaggerUI();
 
 var startup = app.Services.GetService<Startup>();
 startup?.Start();

@@ -19,5 +19,6 @@ namespace OrderStoreApp.Services
         IOrderTransaction Transaction();
 
         OrderResponse GetOrder(string orderId);
+        List<Order> GetOrders(SearchCriteria criteria);
     }
 }

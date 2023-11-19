@@ -66,6 +66,10 @@ namespace OrderStoreApp.Services
         {
             return _cache.GetOrder(orderId);
         }
+        public List<Order> GetOrders(SearchCriteria criteria)
+        {
+            return _cache.GetOrders(criteria);
+        }
 
         public void SubscribeOrder(Action<OrderEvent> action)
         {

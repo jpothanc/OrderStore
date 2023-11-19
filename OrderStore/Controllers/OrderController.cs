@@ -28,7 +28,14 @@ namespace OrderStore.Controllers
             var order = _orderService?.GetOrder(orderId);
             return Ok(order);
         }
-       
+        
+        [HttpGet("orders")]
+        public async Task<IActionResult> GetOrders(string criteria)
+        {
+            var orders = _orderService?.GetOrders(new SearchCriteria());
+            return Ok(orders);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> NewOrderTrans([FromBody][Required] OrderCreateRequest request)
         {
@@ -45,6 +52,24 @@ namespace OrderStore.Controllers
 
             var id = _orderService.Transaction().NewOrderTrans(order);
             return Ok(id);
+        }
+        [HttpPost("summary")]
+        public async Task<IActionResult> GetSummary([FromBody][Required] OrderSummaryRequest request)
+        {
+            if(request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var orderId = request.OrderIds[0];
+            var order = _orderService?.GetOrder(orderId);
+            if(order == null)
+                return NotFound();
+
+            OrderSummary summary = new OrderSummary();
+            summary.Notional =  order.Order.Size * 44;
+            summary.NotionalUsd = 1200000;
+            summary.MarketPercent = 0.5;
+
+            return Ok(summary);
         }
     }
 }
